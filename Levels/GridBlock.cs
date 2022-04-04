@@ -7,6 +7,7 @@ public enum BlockType {
 	Up,
 	Down, 
 	Heart,
+	Star,
 	Garbage,
 	Empty
 }
@@ -80,6 +81,9 @@ public class GridBlock : Node
 		}
 		else if (this.thisBlock == BlockType.Heart){
 			toReturn = " H  ";
+		}
+		else if (this.thisBlock == BlockType.Star){
+			toReturn = " S  ";
 		}
 		else if (this.thisBlock == BlockType.Garbage){
 			toReturn = " G  ";

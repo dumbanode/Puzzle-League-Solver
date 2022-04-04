@@ -7,7 +7,17 @@ public class GameState : Node
 	public const int NUM_ROWS = 9;
 	public const int NUM_COLS = 6;
 	
+	private bool moveMade = false;
+	private bool physicsLock = false;
+	
 	private GridBlock[,] gameGrid = new GridBlock[NUM_ROWS, NUM_COLS]; 
+
+	public override void _Process(float delta)
+	{
+
+		this.applyPhysics();  
+			
+	}
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -20,24 +30,44 @@ public class GameState : Node
 		
 
 		
-		gameGrid[8,3].setType(BlockType.Heart);
+		gameGrid[8,2].setType(BlockType.Star);
+		gameGrid[8,3].setType(BlockType.Square);
+		gameGrid[8,4].setType(BlockType.Up);
+		
+		gameGrid[7,2].setType(BlockType.Heart);
 		gameGrid[7,3].setType(BlockType.Heart);
-		gameGrid[6,3].setType(BlockType.Heart);
-		gameGrid[5,3].setType(BlockType.Heart);
+		gameGrid[7,4].setType(BlockType.Star);
 		
-		//gameGrid[8,0].setType(BlockType.Up);
-		//gameGrid[8,1].setType(BlockType.Up);
+		gameGrid[6,2].setType(BlockType.Heart);
+		gameGrid[6,3].setType(BlockType.Square);
+		gameGrid[6,4].setType(BlockType.Up);
+		
+		gameGrid[5,3].setType(BlockType.Square);
+		gameGrid[5,4].setType(BlockType.Up);
+		
+		gameGrid[4,3].setType(BlockType.Star);
 		
 		
-		//this.swapBlocks(6,2);
 
+		this.swapBlocks(7,3);
+		this.swapBlocks(4,2);
+		
+		
+		
+		//this.swapBlocks(7,2);
+		
+		
+		//this.swapBlocks(7,1);
+		
+		/*
 		while (true){
 			this.applyPhysics();
 			bool clearedBlocks = this.clearBlocks();
 			if (!clearedBlocks){
 				break;
 			}
-		}
+		} 
+		*/
 		
 		this.printGrid();
 	}
@@ -49,6 +79,7 @@ public class GameState : Node
 			this.gameGrid[row,col] = this.gameGrid[row, col+1];
 			this.gameGrid[row, col+1] = tmp;
 		}
+		this.moveMade = true;
 	}
 
 	/*
@@ -101,20 +132,34 @@ public class GameState : Node
 				int ii = 1;
 				while (currCol < NUM_COLS){
 					BlockType this_block = this.gameGrid[i,currCol].getType();
+					
+					bool matched = false;
 					if (
 						this_block == currBlock 
 						&& this_block != BlockType.Empty
 					){
+						
 						ii++;
+						matched = true;
 					}
-					else if (ii > 2) {
-						clearedBlocks = true;
-						for (int k = j; k < (j+ii); k++){
-							this.gameGrid[i, k].markClear();
+					
+					// If we are at the end of the grid OR this block wasn't matched
+					// AND the number in a row that matched is more than two
+					if (( !matched || currCol == NUM_COLS-1)) {
+						
+						if (ii > 2){						
+							clearedBlocks = true;
+							//GD.Print("Clearing Horizontally");
+							for (int k = j; k < (j+ii); k++){
+								this.gameGrid[i, k].markClear();
+							}
 						}
+						break;
 					}
 					currCol++;
 				}
+				
+				
 				
 				// --- Check Vertically ---
 				int currRow = i + 1;
@@ -122,18 +167,33 @@ public class GameState : Node
 				ii = 1;
 				while (currRow < NUM_ROWS){
 					BlockType this_block = this.gameGrid[currRow,j].getType();
+					
+					bool matched = false;
 					if (
 						this_block == currBlock 
 						&& this_block != BlockType.Empty
 					){
+						//GD.Print("Comparing |" + i + ", " + j + "| - |" + currRow + ", " + j + "|");
+						//GD.Print(this_block.ToString() + "==" + currBlock.ToString());
 						ii++;
+						matched = true;
 					}
-					else if (ii > 2) {
-						GD.Print("Clearing Vertically");
-						clearedBlocks = true;
-						for (int k = j; k < (j+ii); k++){
-							this.gameGrid[k, j].markClear();
+					
+					// If we are at the end of the grid OR this block wasn't matched
+					// AND the number in a row that matched is more than two
+					if (( !matched || currRow == NUM_ROWS-1)) {
+						
+						if (ii > 2){
+							
+							//GD.Print("Clearing Vertically");
+							clearedBlocks = true;
+							//GD.Print("Clearing |" + i + ", " + j + "| - |" + (i+ii) + ", " + j + "|");
+							for (int k = i; k < (i+ii); k++){
+								//GD.Print("Marking " + k + ", " + j);
+								this.gameGrid[k, j].markClear();
+							}
 						}
+						break;
 					}
 					currRow++;
 				}
@@ -185,11 +245,6 @@ public class GameState : Node
 		GD.Print(toPrint);
 	}
 
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
-//  {
-//      
-//  }
 }
 
 
