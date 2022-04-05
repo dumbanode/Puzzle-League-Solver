@@ -1,75 +1,58 @@
 using Godot;
 using System;
 
-public class GameState : Node
+
+public enum BlockType {
+	Square,
+	Diamond,
+	Up,
+	Down, 
+	Heart,
+	Star,
+	Garbage,
+	Empty
+}
+
+public class BlockManager : Node
 {
+	public const int PRINT_LOOP = 50;
+	private int curr_loop = 0;
 	
 	public const int NUM_ROWS = 9;
 	public const int NUM_COLS = 6;
 	
-	private bool moveMade = false;
-	private bool physicsLock = false;
 	
 	private GridBlock[,] gameGrid = new GridBlock[NUM_ROWS, NUM_COLS]; 
 
-	public override void _Process(float delta)
-	{
-
-		this.applyPhysics();  
-			
-	}
-
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
+	public BlockManager(){
 		for (int i = 0; i < NUM_ROWS; i++){
 			for (int j = 0; j < NUM_COLS; j++){
 				gameGrid[i,j] = new GridBlock();
 			}
 		}
 		
+		this.setBlock(8,2,BlockType.Star);
+	}
 
-		
-		gameGrid[8,2].setType(BlockType.Star);
-		gameGrid[8,3].setType(BlockType.Square);
-		gameGrid[8,4].setType(BlockType.Up);
-		
-		gameGrid[7,2].setType(BlockType.Heart);
-		gameGrid[7,3].setType(BlockType.Heart);
-		gameGrid[7,4].setType(BlockType.Star);
-		
-		gameGrid[6,2].setType(BlockType.Heart);
-		gameGrid[6,3].setType(BlockType.Square);
-		gameGrid[6,4].setType(BlockType.Up);
-		
-		gameGrid[5,3].setType(BlockType.Square);
-		gameGrid[5,4].setType(BlockType.Up);
-		
-		gameGrid[4,3].setType(BlockType.Star);
-		
-		
+	public override void _Ready()
+	{
+	}
 
-		this.swapBlocks(7,3);
-		this.swapBlocks(4,2);
+	
+	public void update(float delta){
+		this.curr_loop++;
+
+		this.dropBlocks();
+		this.clearBlocks();
 		
-		
-		
-		//this.swapBlocks(7,2);
-		
-		
-		//this.swapBlocks(7,1);
-		
-		/*
-		while (true){
-			this.applyPhysics();
-			bool clearedBlocks = this.clearBlocks();
-			if (!clearedBlocks){
-				break;
-			}
-		} 
-		*/
-		
-		this.printGrid();
+		if (this.curr_loop == PRINT_LOOP){
+			this.printGrid();
+			this.curr_loop = 0;	
+		}
+	}
+	
+	public void setBlock(int row, int col, BlockType type){
+		gameGrid[row,col].setType(type);
 	}
 	
 	public void swapBlocks(int row, int col){
@@ -79,9 +62,8 @@ public class GameState : Node
 			this.gameGrid[row,col] = this.gameGrid[row, col+1];
 			this.gameGrid[row, col+1] = tmp;
 		}
-		this.moveMade = true;
 	}
-
+	
 	/*
 		* Loop through the gamegrid from the bottom
 		* if the space is empty, shift the entire column down by one block
@@ -95,21 +77,35 @@ public class GameState : Node
 		}
 	}
 	
-	public bool clearBlocks(){
-		// go through each block and mark them clear if necessary
-		bool clearedBlocks = this.markBlocksClear();
+	/*
+		* Go through each block
+		* If the space below them is empty, move them down
+	*/
+	public bool dropBlocks(){
+		// if at any point we moved blocks, return true
+		bool movedBlocks = false;
 		
-		for (int i = 0; i < NUM_ROWS; i++) {
+		for (int i = NUM_ROWS -1; i >= 0; i--){
 			for (int j = 0; j < NUM_COLS; j++){
-				if (this.gameGrid[i,j].getIsCleared()){
-					this.gameGrid[i,j].clear();
+				// if the space is empty, shift the column down
+				BlockType currType  = this.gameGrid[i,j].getType();
+				if (currType == BlockType.Empty){
+					for (int k = i; k >= 0; k--){
+						if (k-1 >= 0){
+							// if we are moving down a block that isn't empty,
+							// we applied physics
+							if (gameGrid[k-1, j].getType() != BlockType.Empty){
+								movedBlocks = true;
+							}
+							this.gameGrid[k,j] = gameGrid[k-1, j];
+						}
+					}
 				}
 			}
 		}
-		
-		return clearedBlocks;
-		// go through each block mark them empty
+		return movedBlocks;
 	}
+	
 	
 	/*
 		* Blocks can be cleared in two ways
@@ -204,31 +200,23 @@ public class GameState : Node
 		return clearedBlocks;
 	}
 	
-	public bool dropBlocks(){
-		// if at any point we moved blocks, return true
-		bool movedBlocks = false;
+	public bool clearBlocks(){
+		// go through each block and mark them clear if necessary
+		bool clearedBlocks = this.markBlocksClear();
 		
-		for (int i = NUM_ROWS -1; i >= 0; i--){
+		for (int i = 0; i < NUM_ROWS; i++) {
 			for (int j = 0; j < NUM_COLS; j++){
-				// if the space is empty, shift the column down
-				BlockType currType  = this.gameGrid[i,j].getType();
-				if (currType == BlockType.Empty){
-					for (int k = i; k >= 0; k--){
-						if (k-1 >= 0){
-							// if we are moving down a block that isn't empty,
-							// we applied physics
-							if (gameGrid[k-1, j].getType() != BlockType.Empty){
-								movedBlocks = true;
-							}
-							this.gameGrid[k,j] = gameGrid[k-1, j];
-						}
-					}
+				if (this.gameGrid[i,j].getIsCleared()){
+					this.gameGrid[i,j].clear();
 				}
 			}
 		}
-		return movedBlocks;
+		
+		return clearedBlocks;
+		// go through each block mark them empty
 	}
 	
+
 	public void printGrid(){
 		string toPrint = "";
 		for (int i = 0; i < NUM_ROWS; i++){
@@ -246,5 +234,3 @@ public class GameState : Node
 	}
 
 }
-
-

@@ -1,23 +1,14 @@
 using Godot;
 using System;
 
-public enum BlockType {
-	Square,
-	Diamond,
-	Up,
-	Down, 
-	Heart,
-	Star,
-	Garbage,
-	Empty
-}
-
 public class GridBlock : Node
 {
 
 	private BlockType thisBlock;
 	
 	private bool isCleared = false;
+	
+	private bool isFalling = false;
 	
 		// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -53,10 +44,25 @@ public class GridBlock : Node
 		this.isCleared = toSet;
 	}
 	
+	public void setIsFalling(bool toSet){
+		this.isFalling = toSet;
+	}
+	
+	public bool getIsFalling(){
+		return this.isFalling;
+	}
+	
 	public void clear(){
 		this.setType(BlockType.Empty);
 		this.setIsCleared(false);
 	}
+	
+	public void applyPhysics(){
+		// - Asks gameboard what is below it
+		// - If gameboard returns 'Empty'
+			// - signal gameboard to move it's position
+	}
+	
 	
 	public string print(){
 		string toReturn = "";
