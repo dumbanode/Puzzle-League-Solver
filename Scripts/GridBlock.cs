@@ -3,16 +3,42 @@ using System;
 
 public class GridBlock : Node
 {
-
-	private BlockType thisBlock;
+	
+	[Export]
+	public BlockType thisBlock;
 	
 	private bool isCleared = false;
 	
 	private bool isFalling = false;
 	
-		// Called when the node enters the scene tree for the first time.
+	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		Texture img;
+		// set the image of this block
+		if (this.thisBlock == BlockType.Square){
+			img = (Texture)GD.Load("res://Sprites/Blocks/Square.png");
+		}
+		else if (this.thisBlock == BlockType.Diamond){
+			img = (Texture)GD.Load("res://Sprites/Blocks/Diamond.png");
+		}
+		else if (this.thisBlock == BlockType.Up){
+			img = (Texture)GD.Load("res://Sprites/Blocks/Up.png");
+		}
+		else if (this.thisBlock == BlockType.Down){
+			img = (Texture)GD.Load("res://Sprites/Blocks/Down.png");
+		}
+		else if (this.thisBlock == BlockType.Heart){
+			img = (Texture)GD.Load("res://Sprites/Blocks/Heart.png");
+		}
+		else if (this.thisBlock == BlockType.Star){
+			img = (Texture)GD.Load("res://Sprites/Blocks/Star.png");
+		}
+		else {
+			img = (Texture)GD.Load("res://Sprites/Blocks/Garbage.png");
+		}
+		var sprite = (Sprite)GetNode("BlockSprite");
+		sprite.Texture = img;
 	}
 	
 	public GridBlock(){
@@ -22,6 +48,10 @@ public class GridBlock : Node
 	
 	public GridBlock(BlockType type){
 		this.thisBlock = type;
+	}
+	
+	public void drawBlock(){
+		
 	}
 	
 	public BlockType getType(){

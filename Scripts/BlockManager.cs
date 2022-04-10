@@ -13,20 +13,37 @@ public enum BlockType {
 	Empty
 }
 
+/*
+	* Block Manager
+	* This class handles the management of blocks for the game.
+	* This includes the game grid, applying physics, swapping blocks, clearing blocks, etc.
+*/
 public class BlockManager : Node
 {
 	public const int PRINT_LOOP = 50;
 	private int curr_loop = 0;
 	
-	public const int NUM_ROWS = 9;
-	public const int NUM_COLS = 6;
+	public int num_rows;
+	public int num_cols;
+	
+	public const int DEFAULT_ROWS = 9;
+	public const int DEFAULT_COLS = 6;
+	
+	// public signal swap_block(row, col)
+	// public signal setup_level(arrOfGrid);
 	
 	
-	private GridBlock[,] gameGrid = new GridBlock[NUM_ROWS, NUM_COLS]; 
+	//private GridBlock[,] gameGrid = new GridBlock[NUM_ROWS, NUM_COLS]; 
+	private GridBlock[,] gameGrid;
 
 	public BlockManager(){
-		for (int i = 0; i < NUM_ROWS; i++){
-			for (int j = 0; j < NUM_COLS; j++){
+		this.num_rows = DEFAULT_ROWS;
+		this.num_cols = DEFAULT_COLS;
+		
+		this.gameGrid = new GridBlock[this.num_rows, this.num_cols];
+		
+		for (int i = 0; i < this.num_rows; i++){
+			for (int j = 0; j < this.num_cols; j++){
 				gameGrid[i,j] = new GridBlock();
 			}
 		}
@@ -56,12 +73,25 @@ public class BlockManager : Node
 	}
 	
 	public void swapBlocks(int row, int col){
+		// check if we can swap the blocks (Can't swap if the blocks have been cleared)
+		this.checkSwap(row, col);
 		// ensure that col+1 doesn't go outside the number of columns
-		if (col + 1 < NUM_COLS){
+		if (col + 1 < this.num_cols){
 			GridBlock tmp = this.gameGrid[row,col];
 			this.gameGrid[row,col] = this.gameGrid[row, col+1];
 			this.gameGrid[row, col+1] = tmp;
 		}
+	}
+	
+	/*
+		* Check if we can swap the blocks
+		* Blocks can't be swap if either one of the blocks are cleared
+	*/
+	public bool checkSwap(int row, int col){
+		if (this.gameGrid[row,col].getIsCleared() || this.gameGrid[row,col+1].getIsCleared()){
+			return false;
+		}
+		return true;
 	}
 	
 	/*
@@ -85,8 +115,8 @@ public class BlockManager : Node
 		// if at any point we moved blocks, return true
 		bool movedBlocks = false;
 		
-		for (int i = NUM_ROWS -1; i >= 0; i--){
-			for (int j = 0; j < NUM_COLS; j++){
+		for (int i = this.num_rows -1; i >= 0; i--){
+			for (int j = 0; j < this.num_cols; j++){
 				// if the space is empty, shift the column down
 				BlockType currType  = this.gameGrid[i,j].getType();
 				if (currType == BlockType.Empty){
@@ -117,8 +147,8 @@ public class BlockManager : Node
 	*/
 	public bool markBlocksClear(){
 		bool clearedBlocks = false;
-		for (int i = 0; i < NUM_ROWS; i++) {
-			for (int j = 0; j < NUM_COLS; j++){
+		for (int i = 0; i < this.num_rows; i++) {
+			for (int j = 0; j < this.num_cols; j++){
 				
 				// --- Check Horizontally --
 				BlockType currBlock = this.gameGrid[i,j].getType();
@@ -126,7 +156,7 @@ public class BlockManager : Node
 				
 				// ii will track how many in a row are the same
 				int ii = 1;
-				while (currCol < NUM_COLS){
+				while (currCol < this.num_cols){
 					BlockType this_block = this.gameGrid[i,currCol].getType();
 					
 					bool matched = false;
@@ -141,7 +171,7 @@ public class BlockManager : Node
 					
 					// If we are at the end of the grid OR this block wasn't matched
 					// AND the number in a row that matched is more than two
-					if (( !matched || currCol == NUM_COLS-1)) {
+					if (( !matched || currCol == this.num_cols -1)) {
 						
 						if (ii > 2){						
 							clearedBlocks = true;
@@ -161,7 +191,7 @@ public class BlockManager : Node
 				int currRow = i + 1;
 				// ii will track how many in a row are the same
 				ii = 1;
-				while (currRow < NUM_ROWS){
+				while (currRow < this.num_rows){
 					BlockType this_block = this.gameGrid[currRow,j].getType();
 					
 					bool matched = false;
@@ -177,7 +207,7 @@ public class BlockManager : Node
 					
 					// If we are at the end of the grid OR this block wasn't matched
 					// AND the number in a row that matched is more than two
-					if (( !matched || currRow == NUM_ROWS-1)) {
+					if (( !matched || currRow == this.num_rows -1)) {
 						
 						if (ii > 2){
 							
@@ -204,8 +234,8 @@ public class BlockManager : Node
 		// go through each block and mark them clear if necessary
 		bool clearedBlocks = this.markBlocksClear();
 		
-		for (int i = 0; i < NUM_ROWS; i++) {
-			for (int j = 0; j < NUM_COLS; j++){
+		for (int i = 0; i < this.num_rows; i++) {
+			for (int j = 0; j < this.num_cols; j++){
 				if (this.gameGrid[i,j].getIsCleared()){
 					this.gameGrid[i,j].clear();
 				}
@@ -219,9 +249,9 @@ public class BlockManager : Node
 
 	public void printGrid(){
 		string toPrint = "";
-		for (int i = 0; i < NUM_ROWS; i++){
+		for (int i = 0; i < this.num_rows; i++){
 			toPrint += i + "------------------------------------------\n";
-			for (int j = 0; j < NUM_COLS; j++){
+			for (int j = 0; j < this.num_cols; j++){
 				if (j == 0){
 					toPrint += "| ";
 				}
