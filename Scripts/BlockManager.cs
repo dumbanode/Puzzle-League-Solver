@@ -23,11 +23,21 @@ public class BlockManager : Node
 	public const int PRINT_LOOP = 50;
 	private int curr_loop = 0;
 	
-	public int num_rows;
-	public int num_cols;
+	[Export]
+	public int num_rows = 0;
+	
+	[Export]
+	public int num_cols = 0;
+	
+	// Size of block in pixels
+	[Export]
+	public int blockSize = 100;
 	
 	public const int DEFAULT_ROWS = 9;
 	public const int DEFAULT_COLS = 6;
+	
+	private int widthOfGrid;
+	private int heightOfGrid;
 	
 	// public signal swap_block(row, col)
 	// public signal setup_level(arrOfGrid);
@@ -37,8 +47,13 @@ public class BlockManager : Node
 	private GridBlock[,] gameGrid;
 
 	public BlockManager(){
-		this.num_rows = DEFAULT_ROWS;
-		this.num_cols = DEFAULT_COLS;
+		if (this.num_rows == 0){
+			this.num_rows = DEFAULT_ROWS;
+		}
+		if (this.num_cols == 0){
+			this.num_cols = DEFAULT_COLS;
+		}
+
 		
 		this.gameGrid = new GridBlock[this.num_rows, this.num_cols];
 		
@@ -48,15 +63,16 @@ public class BlockManager : Node
 			}
 		}
 		
+		
 		this.setBlock(8,2,BlockType.Star);
 	}
 
 	public override void _Ready()
 	{
+		this.UpdateSizeOfGrid();
 	}
-
 	
-	public void update(float delta){
+	public override void _Process(float delta){
 		this.curr_loop++;
 
 		this.dropBlocks();
@@ -66,6 +82,23 @@ public class BlockManager : Node
 			this.printGrid();
 			this.curr_loop = 0;	
 		}
+	}
+	
+	
+	public void UpdateSizeOfGrid(){
+		// calculate the width
+		this.widthOfGrid = this.num_cols * this.blockSize;
+		
+		// calculate the height
+		this.heightOfGrid = this.num_rows * this.blockSize;
+		
+		var newPosition = new Vector2(this.widthOfGrid,this.heightOfGrid);
+		
+		// set the size of the grid
+		var ColorGrid = (ColorRect)GetNode("ColorRect");
+		
+		ColorGrid.SetSize(newPosition);
+		GD.Print(newPosition);
 	}
 	
 	public void setBlock(int row, int col, BlockType type){

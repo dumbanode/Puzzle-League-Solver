@@ -39,6 +39,7 @@ public class GridBlock : Node
 		}
 		var sprite = (Sprite)GetNode("BlockSprite");
 		sprite.Texture = img;
+	
 	}
 	
 	public GridBlock(){

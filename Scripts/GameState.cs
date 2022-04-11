@@ -9,16 +9,17 @@ using System;
 public class GameState : Node
 {
 	
-	private BlockManager block_manager;
+	//private BlockManager block_manager;
 
 	public override void _Process(float delta)
 	{
-		block_manager.update(delta);
+		//block_manager.update(delta);
 	}
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		/*
 		block_manager = new BlockManager();
 		
 		block_manager.setBlock(8,2,BlockType.Star);
@@ -42,6 +43,7 @@ public class GameState : Node
 		block_manager.swapBlocks(7,3);
 		block_manager.swapBlocks(7,2);		
 		block_manager.swapBlocks(7,1);
+		*/
 	
 	}
 	
