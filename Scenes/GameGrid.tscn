@@ -5,6 +5,7 @@
 
 [node name="GameGrid" type="Node2D"]
 script = ExtResource( 2 )
+num_cols = 10
 blockSize = 50
 
 [node name="ColorRect" type="ColorRect" parent="."]

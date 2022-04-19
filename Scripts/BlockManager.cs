@@ -18,7 +18,7 @@ public enum BlockType {
 	* This class handles the management of blocks for the game.
 	* This includes the game grid, applying physics, swapping blocks, clearing blocks, etc.
 */
-public class BlockManager : Node
+public class BlockManager : Node2D
 {
 	public const int PRINT_LOOP = 50;
 	private int curr_loop = 0;
@@ -39,6 +39,16 @@ public class BlockManager : Node
 	private int widthOfGrid;
 	private int heightOfGrid;
 	
+	
+	// Where the cursor is currently positioned
+	// Includes this position and the position to the right of it
+	private int cursorPosition;
+	
+	private Vector2 touchPosition;
+	
+	// the current cursor position is going to be converted into a gameGrid position
+	// 
+	
 	// public signal swap_block(row, col)
 	// public signal setup_level(arrOfGrid);
 	
@@ -47,33 +57,22 @@ public class BlockManager : Node
 	private GridBlock[,] gameGrid;
 
 	public BlockManager(){
-		if (this.num_rows == 0){
-			this.num_rows = DEFAULT_ROWS;
-		}
-		if (this.num_cols == 0){
-			this.num_cols = DEFAULT_COLS;
-		}
 
-		
-		this.gameGrid = new GridBlock[this.num_rows, this.num_cols];
-		
-		for (int i = 0; i < this.num_rows; i++){
-			for (int j = 0; j < this.num_cols; j++){
-				gameGrid[i,j] = new GridBlock();
-			}
-		}
-		
-		
-		this.setBlock(8,2,BlockType.Star);
 	}
 
 	public override void _Ready()
 	{
+		this.AllocatedGameGrid();
 		this.UpdateSizeOfGrid();
+		
+		this.setBlock(8,2,BlockType.Star);
 	}
 	
+	
 	public override void _Process(float delta){
-		this.curr_loop++;
+		this.TouchInput();
+		
+		//this.curr_loop++;
 
 		this.dropBlocks();
 		this.clearBlocks();
@@ -84,7 +83,43 @@ public class BlockManager : Node
 		}
 	}
 	
+	public void TouchInput(){
+		if (Input.IsActionJustPressed("ui_touch")){
+			touchPosition = GetViewport().GetMousePosition();
+		
+			Vector2 gridPosition = Position;
+			touchPosition = ToLocal(touchPosition);
+			GD.Print(touchPosition);
+		}
+	}
 	
+	/*
+		* Allocate space for the Game Grid
+	*/
+	public void AllocatedGameGrid(){
+		// if no size has been specified, use the default number of rows and cols
+		if (this.num_rows == 0){
+			this.num_rows = DEFAULT_ROWS;
+		}
+		if (this.num_cols == 0){
+			this.num_cols = DEFAULT_COLS;
+		}
+
+		// allocated the gamegrid
+		this.gameGrid = new GridBlock[this.num_rows, this.num_cols];
+		
+		for (int i = 0; i < this.num_rows; i++){
+			for (int j = 0; j < this.num_cols; j++){
+				gameGrid[i,j] = new GridBlock();
+			}
+		}
+	}
+	
+	
+	/*
+		* Set the size of the grid visually based on how large
+		* the game grid is
+	*/
 	public void UpdateSizeOfGrid(){
 		// calculate the width
 		this.widthOfGrid = this.num_cols * this.blockSize;
