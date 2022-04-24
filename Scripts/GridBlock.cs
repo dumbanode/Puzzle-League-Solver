@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class GridBlock : Node
+public class GridBlock : Node2D
 {
 	
 	[Export]
@@ -11,9 +11,25 @@ public class GridBlock : Node
 	
 	private bool isFalling = false;
 	
+	public bool isSwapping = false;
+	
+	private Vector2 Down = new Vector2(0, 1);
+	
+	private Tween moveTween;
+	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		/*
+		string[] names = Enum.GetNames(typeof(Tween.EaseType));
+		
+		foreach (string i in names){
+			GD.Print(i);
+		}*/
+		
+		// get the tween node
+		this.moveTween = (Tween)GetNode("MoveTween");
+		
 		Texture img;
 		// set the image of this block
 		if (this.thisBlock == BlockType.Square){
@@ -49,6 +65,19 @@ public class GridBlock : Node
 	
 	public GridBlock(BlockType type){
 		this.thisBlock = type;
+	}
+	
+	public void Move(Vector2 target){
+			moveTween.InterpolateProperty(this, "position", this.Position, 
+								target, (float).3, Tween.TransitionType.Elastic, Tween.EaseType.Out);
+			moveTween.Start();
+	}
+	
+	public void SetSize(float size){
+		float toScale = (float)(size / 400);
+		GD.Print(toScale);
+		var sprite = (Sprite)GetNode("BlockSprite");
+		sprite.Scale = new Vector2(toScale, toScale);
 	}
 	
 	public void drawBlock(){
@@ -88,10 +117,23 @@ public class GridBlock : Node
 		this.setIsCleared(false);
 	}
 	
+	/*
 	public void applyPhysics(){
 		// - Asks gameboard what is below it
 		// - If gameboard returns 'Empty'
 			// - signal gameboard to move it's position
+	}
+	*/
+	
+	/*
+		* If there is nothing below this block, fall downwards
+	*/
+	public void ApplyGravity(){
+		
+	}
+	
+	public override void _Process(float delta){
+		this.ApplyGravity();
 	}
 	
 	

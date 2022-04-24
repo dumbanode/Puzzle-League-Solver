@@ -23,13 +23,21 @@ public class BlockManager : Node2D
 	public const int PRINT_LOOP = 50;
 	private int curr_loop = 0;
 	
+	/*
+		* The number of rows the game grid will have
+	*/
 	[Export]
 	public int num_rows = 0;
 	
+	/*
+		* The number of columns the game grid will have
+	*/
 	[Export]
 	public int num_cols = 0;
 	
-	// Size of block in pixels
+	/*
+		* The size of the grid block in pixels
+	*/
 	[Export]
 	public int blockSize = 100;
 	
@@ -39,6 +47,8 @@ public class BlockManager : Node2D
 	private int widthOfGrid;
 	private int heightOfGrid;
 	
+	// The scene of a grid block
+	PackedScene blockScene = GD.Load<PackedScene>("res://Scenes/Blocks/Block.tscn");
 	
 	// Where the cursor is currently positioned
 	// Includes this position and the position to the right of it
@@ -62,10 +72,21 @@ public class BlockManager : Node2D
 
 	public override void _Ready()
 	{
+		// allocate the appropriate memory
 		this.AllocatedGameGrid();
 		this.UpdateSizeOfGrid();
 		
+		// add the blocks to the array
+		this.setBlock(8,5,BlockType.Diamond);
+		this.setBlock(8,4,BlockType.Star);
+		this.setBlock(8,3,BlockType.Diamond);
 		this.setBlock(8,2,BlockType.Star);
+		this.setBlock(8,1,BlockType.Star);
+		this.setBlock(8,0,BlockType.Square);
+		this.setBlock(7,3,BlockType.Diamond);
+		
+		// populate the blocks on the game grid
+		this.PopulateBlocks();
 	}
 	
 	
@@ -83,13 +104,89 @@ public class BlockManager : Node2D
 		}
 	}
 	
+	/*
+		* Go through the game grid array,
+		* populate the blocks stored in memory to visual game board
+	*/
+	private void PopulateBlocks(){
+		// go through the game grid array
+		for (int i = this.num_rows -1; i >= 0; i--){
+			for (int j = 0; j < this.num_cols; j++){
+				// if there is a block in this position,
+				// populate it on the game board
+				if (this.gameGrid[i,j].getType() != BlockType.Empty){
+					// get the pixel coordinates
+					Vector2 gridPixelPosition = this.ArrayToPixel(i,j);
+					
+					GD.Print(gridPixelPosition);
+					
+					// Add a new block
+					var blockInstance = (GridBlock)blockScene.Instance();
+					blockInstance.setType(this.gameGrid[i,j].getType());
+					AddChild(blockInstance);
+					blockInstance.Position = gridPixelPosition;
+					
+					// set the size of this block
+					blockInstance.SetSize(this.blockSize);
+					
+					this.gameGrid[i,j] = blockInstance;
+				}
+
+			}
+		}
+		
+	}
+	
+	public Vector2 PixelToArray(Vector2 position){
+		double row = -1;
+		double col = -1;
+		
+		if (IsInGrid(position)){
+			row = Math.Floor(position.x / this.blockSize);
+			col = Math.Floor(position.y / this.blockSize);		
+		}
+		
+		return new Vector2((float)row, (float)col);
+	}
+	
+	public Vector2 ArrayToPixel(int row, int col){
+		float new_row = row * this.blockSize;
+		float new_col = col * this.blockSize;
+		return new Vector2(new_col, new_row);
+	}
+	
+	
+	public bool IsInGrid(Vector2 position){
+		bool toReturn = false;
+		int xoob = this.num_cols * this.blockSize;
+		int yoob = this.num_rows * this.blockSize;
+		if (
+			position.x >= 0 && position.x <  xoob
+			&& position.y>= -1 && position.y < yoob
+		){
+			toReturn = true;
+		}
+		return toReturn;
+	}
+	
 	public void TouchInput(){
 		if (Input.IsActionJustPressed("ui_touch")){
 			touchPosition = GetViewport().GetMousePosition();
 		
 			Vector2 gridPosition = Position;
 			touchPosition = ToLocal(touchPosition);
-			GD.Print(touchPosition);
+			
+			Vector2 touchedIndex = PixelToArray(touchPosition);
+			GD.Print(touchedIndex);
+			
+			// get the block
+			BlockType thisBlock = this.getBlock((int)touchedIndex.y, (int)touchedIndex.x);
+			
+			// swap the blocks
+			this.SwapBlocks(touchPosition);
+			
+			GD.Print(thisBlock);
+			
 		}
 	}
 	
@@ -140,9 +237,55 @@ public class BlockManager : Node2D
 		gameGrid[row,col].setType(type);
 	}
 	
-	public void swapBlocks(int row, int col){
+	public BlockType getBlock(int row, int col){
+		if (IsInGrid(new Vector2((float)col, (float)row))){
+			return gameGrid[row,col].getType();
+		}
+		else {
+			return BlockType.Empty;
+		}
+	}
+	
+	public void SwapBlocks(Vector2 position){
+		// get the array index
+		var selectedBlockPosition = PixelToArray(position);
+		// ensure we are not out of bounds
+		if (IsInGrid(position) && CanSwap((int)selectedBlockPosition.y, (int)selectedBlockPosition.x)){
+			// get the block positions in the array
+			// get the block to swap with
+			var blockToSwapPosition = selectedBlockPosition;
+			blockToSwapPosition.x += 1;
+
+			// get the reference to the block in the grid
+			var selectedBlock = this.gameGrid[(int)selectedBlockPosition.y, (int)selectedBlockPosition.x];
+			var blockToSwap = this.gameGrid[(int)blockToSwapPosition.y, (int)blockToSwapPosition.x];
+			
+			SwapBlocksInArray((int)selectedBlockPosition.y, (int)selectedBlockPosition.x);
+			
+			// move selected block
+			if (selectedBlock.getType() != BlockType.Empty){
+				Vector2 selectedToMove = new Vector2((float)selectedBlockPosition.x * this.blockSize,
+													(float)selectedBlockPosition.y * this.blockSize);
+				selectedToMove.x += this.blockSize;
+				selectedBlock.Move(selectedToMove);
+			}
+			
+			// move the block to swap
+			if (blockToSwap.getType() != BlockType.Empty){
+				Vector2 swapToMove = new Vector2((float)blockToSwapPosition.x * this.blockSize,
+														(float)blockToSwapPosition.y * this.blockSize);
+				swapToMove.x -= this.blockSize;
+				blockToSwap.Move(swapToMove);
+			}
+		}
+		
+		
+		
+	}
+	
+	public void SwapBlocksInArray(int row, int col){
 		// check if we can swap the blocks (Can't swap if the blocks have been cleared)
-		this.checkSwap(row, col);
+		//this.checkSwap(row, col);
 		// ensure that col+1 doesn't go outside the number of columns
 		if (col + 1 < this.num_cols){
 			GridBlock tmp = this.gameGrid[row,col];
@@ -157,6 +300,17 @@ public class BlockManager : Node2D
 	*/
 	public bool checkSwap(int row, int col){
 		if (this.gameGrid[row,col].getIsCleared() || this.gameGrid[row,col+1].getIsCleared()){
+			return false;
+		}
+		return true;
+	}
+	
+	/*
+		* Returns false if can't swap (Out of bounds, garbage blocks, etc.)
+	*/
+	public bool CanSwap(int row, int col){
+		// is the next position out of bounds?
+		if (col+1 >= this.num_cols){
 			return false;
 		}
 		return true;
