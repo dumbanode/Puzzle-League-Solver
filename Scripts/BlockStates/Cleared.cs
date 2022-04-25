@@ -8,8 +8,8 @@ using System;
 */
 public class Cleared : State
 {
-	public override void Enter(){
-		GD.Print("hi there");
+	public override void Enter(Godot.Collections.Dictionary<string, string> msg = null){
+		GD.Print("--- CLEARED ---");
 	}
 
 	public override void Update(float delta){ }

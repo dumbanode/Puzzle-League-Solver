@@ -104,38 +104,7 @@ public class BlockManager : Node2D
 		}
 	}
 	
-	/*
-		* Go through the game grid array,
-		* populate the blocks stored in memory to visual game board
-	*/
-	private void PopulateBlocks(){
-		// go through the game grid array
-		for (int i = this.num_rows -1; i >= 0; i--){
-			for (int j = 0; j < this.num_cols; j++){
-				// if there is a block in this position,
-				// populate it on the game board
-				if (this.gameGrid[i,j].getType() != BlockType.Empty){
-					// get the pixel coordinates
-					Vector2 gridPixelPosition = this.ArrayToPixel(i,j);
-					
-					GD.Print(gridPixelPosition);
-					
-					// Add a new block
-					var blockInstance = (GridBlock)blockScene.Instance();
-					blockInstance.setType(this.gameGrid[i,j].getType());
-					AddChild(blockInstance);
-					blockInstance.Position = gridPixelPosition;
-					
-					// set the size of this block
-					blockInstance.SetSize(this.blockSize);
-					
-					this.gameGrid[i,j] = blockInstance;
-				}
 
-			}
-		}
-		
-	}
 	
 	public Vector2 PixelToArray(Vector2 position){
 		double row = -1;
@@ -190,27 +159,6 @@ public class BlockManager : Node2D
 		}
 	}
 	
-	/*
-		* Allocate space for the Game Grid
-	*/
-	public void AllocatedGameGrid(){
-		// if no size has been specified, use the default number of rows and cols
-		if (this.num_rows == 0){
-			this.num_rows = DEFAULT_ROWS;
-		}
-		if (this.num_cols == 0){
-			this.num_cols = DEFAULT_COLS;
-		}
-
-		// allocated the gamegrid
-		this.gameGrid = new GridBlock[this.num_rows, this.num_cols];
-		
-		for (int i = 0; i < this.num_rows; i++){
-			for (int j = 0; j < this.num_cols; j++){
-				gameGrid[i,j] = new GridBlock();
-			}
-		}
-	}
 	
 	
 	/*
@@ -468,6 +416,62 @@ public class BlockManager : Node2D
 		// go through each block mark them empty
 	}
 	
+	
+	/*
+		* Allocate space for the Game Grid
+	*/
+	public void AllocatedGameGrid(){
+		// if no size has been specified, use the default number of rows and cols
+		if (this.num_rows == 0){
+			this.num_rows = DEFAULT_ROWS;
+		}
+		if (this.num_cols == 0){
+			this.num_cols = DEFAULT_COLS;
+		}
+
+		// allocated the gamegrid
+		this.gameGrid = new GridBlock[this.num_rows, this.num_cols];
+		
+		for (int i = 0; i < this.num_rows; i++){
+			for (int j = 0; j < this.num_cols; j++){
+				gameGrid[i,j] = new GridBlock();
+			}
+		}
+	}
+	
+	
+	/*
+		* Go through the game grid array,
+		* populate the blocks stored in memory to visual game board
+	*/
+	private void PopulateBlocks(){
+		// go through the game grid array
+		for (int i = this.num_rows -1; i >= 0; i--){
+			for (int j = 0; j < this.num_cols; j++){
+				// if there is a block in this position,
+				// populate it on the game board
+				if (this.gameGrid[i,j].getType() != BlockType.Empty){
+					// get the pixel coordinates
+					Vector2 gridPixelPosition = this.ArrayToPixel(i,j);
+					
+					GD.Print(gridPixelPosition);
+					
+					// Add a new block
+					var blockInstance = (GridBlock)blockScene.Instance();
+					blockInstance.setType(this.gameGrid[i,j].getType());
+					AddChild(blockInstance);
+					blockInstance.Position = gridPixelPosition;
+					
+					// set the size of this block
+					blockInstance.SetSize(this.blockSize);
+					
+					this.gameGrid[i,j] = blockInstance;
+				}
+
+			}
+		}
+		
+	}
 
 	public void printGrid(){
 		string toPrint = "";

@@ -39,17 +39,14 @@ public class StateMachine : Node
 		this.state.PhysicsUpdate(delta);
 	}
 	
-	public void TransitionTo(String targetState){
+	public void TransitionTo(String targetState, 
+				Godot.Collections.Dictionary<string, string> msg = null){
 		if (HasNode(targetState)){
 			this.state.Exit();
 			this.state = GetNode<State>(targetState);
-			this.state.Enter();
+			this.state.Enter(msg);
 			EmitSignal(nameof(Transitioned));
 		}
-	}
-	
-	public void test(){
-		GD.Print("Test");
 	}
 	
 }

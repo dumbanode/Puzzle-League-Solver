@@ -8,8 +8,8 @@ using System;
 */
 public class Swapping : State
 {
-	public override void Enter(){
-		GD.Print("hi there");
+	public override void Enter(Godot.Collections.Dictionary<string, string> msg = null){
+		GD.Print("Swapping");
 	}
 
 	public override void Update(float delta){ }

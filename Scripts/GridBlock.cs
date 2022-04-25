@@ -27,6 +27,8 @@ public class GridBlock : Node2D
 	
 	private Tween moveTween;
 	
+	private StateMachine stateMachine;
+	
 	//  --- Constructors
 	public GridBlock(){
 		this.thisBlock = BlockType.Empty;
@@ -42,9 +44,13 @@ public class GridBlock : Node2D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{		
+		// get the state machine
+		this.stateMachine = GetNode<StateMachine>("StateMachine");
+
 		// get the tween node
 		this.moveTween = (Tween)GetNode("MoveTween");
 		
+		// set the image for this block
 		Texture img;
 		// set the image of this block
 		if (this.thisBlock == BlockType.Square){
@@ -70,17 +76,24 @@ public class GridBlock : Node2D
 		}
 		var sprite = (Sprite)GetNode("BlockSprite");
 		sprite.Texture = img;
+		
 	}
 	
 	public override void _Process(float delta){
-		this.ApplyGravity();
+		this.stateMachine._Process(delta);
 	}
 	
 	// ------- Swapping.cs?  -------
 	public void Move(Vector2 target){
-			moveTween.InterpolateProperty(this, "position", this.Position, 
-								target, (float).3, Tween.TransitionType.Elastic, Tween.EaseType.Out);
-			moveTween.Start();
+		this.stateMachine.TransitionTo("Swapping");
+		moveTween.InterpolateProperty(this, "position", this.Position, 
+							target, (float).3, Tween.TransitionType.Elastic, Tween.EaseType.Out);
+		moveTween.InterpolateCallback(this, (float).3, "TransitionTo", "Default");
+		moveTween.Start();
+	}
+	
+	public void TransitionTo(String state){
+		this.stateMachine.TransitionTo(state);
 	}
 	
 	

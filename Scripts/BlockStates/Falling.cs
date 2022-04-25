@@ -8,7 +8,7 @@ using System;
 */
 public class Falling : State
 {
-	public override void Enter(){
+	public override void Enter(Godot.Collections.Dictionary<string, string> msg = null){
 		GD.Print("hi there");
 	}
 
