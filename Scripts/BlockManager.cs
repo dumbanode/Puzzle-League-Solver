@@ -208,8 +208,9 @@ public class BlockManager : Node2D
 			var selectedBlock = this.gameGrid[(int)selectedBlockPosition.y, (int)selectedBlockPosition.x];
 			var blockToSwap = this.gameGrid[(int)blockToSwapPosition.y, (int)blockToSwapPosition.x];
 			
-			SwapBlocksInArray((int)selectedBlockPosition.y, (int)selectedBlockPosition.x);
+			this.SwapBlocksInArray((int)selectedBlockPosition.y, (int)selectedBlockPosition.x);
 			
+			// -- Swap the blocks visually
 			// move selected block
 			if (selectedBlock.getType() != BlockType.Empty){
 				Vector2 selectedToMove = new Vector2((float)selectedBlockPosition.x * this.blockSize,
@@ -235,11 +236,11 @@ public class BlockManager : Node2D
 		// check if we can swap the blocks (Can't swap if the blocks have been cleared)
 		//this.checkSwap(row, col);
 		// ensure that col+1 doesn't go outside the number of columns
-		if (col + 1 < this.num_cols){
+		//if (col + 1 < this.num_cols){
 			GridBlock tmp = this.gameGrid[row,col];
 			this.gameGrid[row,col] = this.gameGrid[row, col+1];
 			this.gameGrid[row, col+1] = tmp;
-		}
+		//}
 	}
 	
 	/*

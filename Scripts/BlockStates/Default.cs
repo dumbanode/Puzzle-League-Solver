@@ -11,7 +11,7 @@ using System;
 */
 public class Default : State
 {
-	public override void Enter(Godot.Collections.Dictionary<string, string> msg = null){
+	public override void Enter(Godot.Collections.Dictionary<string, object> msg = null){
 		GD.Print("Default");
 		var owner = Owner as GridBlock;
 	}

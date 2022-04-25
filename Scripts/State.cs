@@ -17,7 +17,7 @@ public class State : Node
 		
 	}
 	
-	public virtual void Enter(Godot.Collections.Dictionary<string, string> msg = null){
+	public virtual void Enter(Godot.Collections.Dictionary<string, object> msg = null){
 		
 	}
 	

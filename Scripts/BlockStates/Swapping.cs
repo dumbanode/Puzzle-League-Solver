@@ -8,11 +8,23 @@ using System;
 */
 public class Swapping : State
 {
-	public override void Enter(Godot.Collections.Dictionary<string, string> msg = null){
+	public override void Enter(Godot.Collections.Dictionary<string, object> msg = null){
 		GD.Print("Swapping");
+		if (msg.ContainsKey("position")){
+			this.Move((Vector2)msg["position"]);
+		}
 	}
 
 	public override void Update(float delta){ }
+	
+	public void Move(Vector2 target){
+		var owner = Owner as GridBlock;
+		
+		owner.MoveTween.InterpolateProperty(owner, "position", owner.Position, 
+					target, (float).3, Tween.TransitionType.Elastic, Tween.EaseType.Out);
+		owner.MoveTween.InterpolateCallback(stateMachine, (float).3, "TransitionTo", "Default");
+		owner.MoveTween.Start();
+	}
 	
 
 }

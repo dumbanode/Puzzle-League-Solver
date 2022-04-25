@@ -40,7 +40,7 @@ public class StateMachine : Node
 	}
 	
 	public void TransitionTo(String targetState, 
-				Godot.Collections.Dictionary<string, string> msg = null){
+				Godot.Collections.Dictionary<string, object> msg = null){
 		if (HasNode(targetState)){
 			this.state.Exit();
 			this.state = GetNode<State>(targetState);

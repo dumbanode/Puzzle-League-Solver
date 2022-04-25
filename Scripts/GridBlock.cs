@@ -25,7 +25,7 @@ public class GridBlock : Node2D
 	
 	private Vector2 Down = new Vector2(0, 1);
 	
-	private Tween moveTween;
+	public Tween MoveTween;
 	
 	private StateMachine stateMachine;
 	
@@ -48,7 +48,7 @@ public class GridBlock : Node2D
 		this.stateMachine = GetNode<StateMachine>("StateMachine");
 
 		// get the tween node
-		this.moveTween = (Tween)GetNode("MoveTween");
+		this.MoveTween = (Tween)GetNode("MoveTween");
 		
 		// set the image for this block
 		Texture img;
@@ -85,11 +85,19 @@ public class GridBlock : Node2D
 	
 	// ------- Swapping.cs?  -------
 	public void Move(Vector2 target){
-		this.stateMachine.TransitionTo("Swapping");
+		// Transition to swapping state
+		// pass in where to swap to
+		var whereToMove = new Godot.Collections.Dictionary<string,object>();
+		whereToMove.Add("position", target);
+		
+		this.stateMachine.TransitionTo("Swapping", whereToMove);
+		
+		/*
 		moveTween.InterpolateProperty(this, "position", this.Position, 
 							target, (float).3, Tween.TransitionType.Elastic, Tween.EaseType.Out);
 		moveTween.InterpolateCallback(this, (float).3, "TransitionTo", "Default");
 		moveTween.Start();
+		*/
 	}
 	
 	public void TransitionTo(String state){
