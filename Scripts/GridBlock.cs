@@ -3,6 +3,16 @@ using System;
 
 public class GridBlock : Node2D
 {
+	// valid states for this block
+	public enum States {
+		Default,
+		Cleared,
+		Falling,
+		Swapping
+	}
+	
+	// current state
+	private States state = States.Default;
 	
 	[Export]
 	public BlockType thisBlock;
@@ -17,16 +27,21 @@ public class GridBlock : Node2D
 	
 	private Tween moveTween;
 	
+	//  --- Constructors
+	public GridBlock(){
+		this.thisBlock = BlockType.Empty;
+	}
+	
+	
+	public GridBlock(BlockType type){
+		this.thisBlock = type;
+	}
+	
+	// -- Ready and Process functions
+	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
-	{
-		/*
-		string[] names = Enum.GetNames(typeof(Tween.EaseType));
-		
-		foreach (string i in names){
-			GD.Print(i);
-		}*/
-		
+	{		
 		// get the tween node
 		this.moveTween = (Tween)GetNode("MoveTween");
 		
@@ -55,33 +70,34 @@ public class GridBlock : Node2D
 		}
 		var sprite = (Sprite)GetNode("BlockSprite");
 		sprite.Texture = img;
-	
 	}
 	
-	public GridBlock(){
-		this.thisBlock = BlockType.Empty;
+	public override void _Process(float delta){
+		this.ApplyGravity();
 	}
 	
-	
-	public GridBlock(BlockType type){
-		this.thisBlock = type;
-	}
-	
+	// ------- Swapping.cs?  -------
 	public void Move(Vector2 target){
 			moveTween.InterpolateProperty(this, "position", this.Position, 
 								target, (float).3, Tween.TransitionType.Elastic, Tween.EaseType.Out);
 			moveTween.Start();
 	}
 	
+	
+	// --- Cleared.cs
+	public void clear(){
+		this.setType(BlockType.Empty);
+		this.setIsCleared(false);
+	}
+	
+	
+	// --- Getters and Setters
+	
 	public void SetSize(float size){
 		float toScale = (float)(size / 400);
 		GD.Print(toScale);
 		var sprite = (Sprite)GetNode("BlockSprite");
 		sprite.Scale = new Vector2(toScale, toScale);
-	}
-	
-	public void drawBlock(){
-		
 	}
 	
 	public BlockType getType(){
@@ -92,49 +108,34 @@ public class GridBlock : Node2D
 		this.thisBlock = toSet;
 	}
 	
-	public void markClear(){
-		this.isCleared = true;
-	}
 	
+	
+	// ----- return state and compare -----
 	public bool getIsCleared(){
 		return this.isCleared;
-	}
-	
-	public void setIsCleared(bool toSet){
-		this.isCleared = toSet;
-	}
-	
-	public void setIsFalling(bool toSet){
-		this.isFalling = toSet;
 	}
 	
 	public bool getIsFalling(){
 		return this.isFalling;
 	}
 	
-	public void clear(){
-		this.setType(BlockType.Empty);
-		this.setIsCleared(false);
+	////////////////////////////////
+	
+	// ---- StateMachine.transitionto() -----
+	public void markClear(){
+		this.isCleared = true;
 	}
 	
-	/*
-	public void applyPhysics(){
-		// - Asks gameboard what is below it
-		// - If gameboard returns 'Empty'
-			// - signal gameboard to move it's position
+	public void setIsCleared(bool toSet){
+		this.isCleared = toSet;
 	}
-	*/
-	
-	/*
-		* If there is nothing below this block, fall downwards
-	*/
-	public void ApplyGravity(){
-		
+
+	public void setIsFalling(bool toSet){
+		this.isFalling = toSet;
 	}
 	
-	public override void _Process(float delta){
-		this.ApplyGravity();
-	}
+	//////////////////////////////////////
+	
 	
 	
 	public string print(){
