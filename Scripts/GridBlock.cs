@@ -83,21 +83,21 @@ public class GridBlock : Node2D
 		this.stateMachine._Process(delta);
 	}
 	
-	// ------- Swapping.cs?  -------
+	// What if the current state is falling, swapping or cleared?
+	// We only want to swap IF we are in the default state
 	public void Move(Vector2 target){
 		// Transition to swapping state
 		// pass in where to swap to
+		/*
 		var whereToMove = new Godot.Collections.Dictionary<string,object>();
 		whereToMove.Add("position", target);
-		
 		this.stateMachine.TransitionTo("Swapping", whereToMove);
-		
-		/*
-		moveTween.InterpolateProperty(this, "position", this.Position, 
-							target, (float).3, Tween.TransitionType.Elastic, Tween.EaseType.Out);
-		moveTween.InterpolateCallback(this, (float).3, "TransitionTo", "Default");
-		moveTween.Start();
 		*/
+		
+		var whereToMove = new Godot.Collections.Dictionary<string,object>();
+		whereToMove.Add("test", "hi");
+		this.stateMachine.HandleFunction(whereToMove);
+		
 	}
 	
 	public void TransitionTo(String state){

@@ -80,7 +80,7 @@ public class BlockManager : Node2D
 		this.setBlock(8,5,BlockType.Diamond);
 		this.setBlock(8,4,BlockType.Star);
 		this.setBlock(8,3,BlockType.Diamond);
-		this.setBlock(8,2,BlockType.Star);
+		//this.setBlock(8,2,BlockType.Star);
 		this.setBlock(8,1,BlockType.Star);
 		this.setBlock(8,0,BlockType.Square);
 		this.setBlock(7,3,BlockType.Diamond);

@@ -26,7 +26,11 @@ public class StateMachine : Node
 	}
 	
 	public void UnhandledInput(InputEvent Event){
-		this.state.HandleInput(Event);
+		//this.state.HandleInput(Event);
+	}
+	
+	public void HandleFunction(Godot.Collections.Dictionary<string, object> msg = null){
+		this.state.HandleFunction(msg);
 	}
 
 
