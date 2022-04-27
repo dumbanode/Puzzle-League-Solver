@@ -21,8 +21,6 @@ public class GridBlock : Node2D
 	
 	private bool isFalling = false;
 	
-	public bool isSwapping = false;
-	
 	private Vector2 Down = new Vector2(0, 1);
 	
 	public Tween MoveTween;
@@ -88,15 +86,9 @@ public class GridBlock : Node2D
 	public void Move(Vector2 target){
 		// Transition to swapping state
 		// pass in where to swap to
-		/*
-		var whereToMove = new Godot.Collections.Dictionary<string,object>();
-		whereToMove.Add("position", target);
-		this.stateMachine.TransitionTo("Swapping", whereToMove);
-		*/
-		
-		var whereToMove = new Godot.Collections.Dictionary<string,object>();
-		whereToMove.Add("test", "hi");
-		this.stateMachine.HandleFunction(whereToMove);
+		var methodAction = new Godot.Collections.Dictionary<string,object>();
+		methodAction.Add("Move", target);
+		this.stateMachine.HandleMethod(methodAction);
 		
 	}
 	

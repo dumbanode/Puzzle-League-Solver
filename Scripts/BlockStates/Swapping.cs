@@ -9,20 +9,20 @@ using System;
 public class Swapping : State
 {
 	public override void Enter(Godot.Collections.Dictionary<string, object> msg = null){
-		GD.Print("Swapping");
+		GD.Print("In Swapping State");
 		if (msg.ContainsKey("position")){
-			this.Move((Vector2)msg["position"]);
+			this.SwapBlocks((Vector2)msg["position"]);
 		}
 	}
 
 	public override void Update(float delta){ }
 	
-	public void Move(Vector2 target){
+	public void SwapBlocks(Vector2 target){
 		var owner = Owner as GridBlock;
 		
 		owner.MoveTween.InterpolateProperty(owner, "position", owner.Position, 
 					target, (float).3, Tween.TransitionType.Elastic, Tween.EaseType.Out);
-		owner.MoveTween.InterpolateCallback(stateMachine, (float).3, "TransitionTo", "Default");
+		owner.MoveTween.InterpolateCallback(owner, (float).1, "TransitionTo", "Default");
 		owner.MoveTween.Start();
 	}
 	
