@@ -408,7 +408,7 @@ public class BlockManager : Node2D
 		for (int i = 0; i < this.num_rows; i++) {
 			for (int j = 0; j < this.num_cols; j++){
 				if (this.gameGrid[i,j].getIsCleared()){
-					this.gameGrid[i,j].clear();
+					//this.gameGrid[i,j].clear();
 				}
 			}
 		}

@@ -17,7 +17,7 @@ public class GridBlock : Node2D
 	[Export]
 	public BlockType thisBlock;
 	
-	private bool isCleared = false;
+	public bool isCleared = false;
 	
 	private bool isFalling = false;
 	
@@ -97,11 +97,13 @@ public class GridBlock : Node2D
 	}
 	
 	
+	/*
 	// --- Cleared.cs
 	public void clear(){
 		this.setType(BlockType.Empty);
 		this.setIsCleared(false);
 	}
+	*/
 	
 	
 	// --- Getters and Setters

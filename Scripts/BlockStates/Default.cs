@@ -19,10 +19,21 @@ public class Default : State
 	public override void Update(float delta){
 		// Check if we should transition to falling state
 		this.CheckFalling();
+		this.CheckCleared();
 	}
 	
 	private void CheckFalling(){
 		
+	}
+	
+	private void CheckCleared(){
+		var owner = Owner as GridBlock;
+		if (owner.isCleared){
+			GD.Print(owner.isCleared);
+		}
+		if (owner.isCleared){
+			this.stateMachine.TransitionTo("Cleared");
+		}
 	}
 	
 	public void Move(Vector2 target){
