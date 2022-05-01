@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public class State : Node
 {
@@ -17,14 +18,25 @@ public class State : Node
 		
 	}
 	
-	public virtual void HandleMethod(Godot.Collections.Dictionary<string, object> msg = null){
+	public virtual object HandleMethod(Godot.Collections.Dictionary<string, object> msg = null){
+		List<object> toReturn = new List<object>();
 		foreach(System.Collections.Generic.KeyValuePair<string,object> i in msg){
 			Type thisType = this.GetType();
 			object[] toPass = new object[] {i.Value};
 			if (GetType().GetMethod(i.Key) != null){
-				GetType().GetMethod(i.Key).Invoke(this, toPass);
+				object results = new object();
+				var method = GetType().GetMethod(i.Key);
+				if (method.ReturnType != typeof(void)){
+					results = method.Invoke(this, toPass);
+				}
+				else {
+					method.Invoke(this, toPass);
+					results = false;
+				}
+				toReturn.Add(results);
 			}
 		}
+		return toReturn;
 	}
 	
 	public virtual void Enter(Godot.Collections.Dictionary<string, object> msg = null){

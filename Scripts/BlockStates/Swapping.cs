@@ -22,7 +22,7 @@ public class Swapping : State
 		
 		owner.MoveTween.InterpolateProperty(owner, "position", owner.Position, 
 					target, (float).3, Tween.TransitionType.Elastic, Tween.EaseType.Out);
-		owner.MoveTween.InterpolateCallback(owner, (float).1, "TransitionTo", "Default");
+		owner.MoveTween.InterpolateCallback(owner, (float).3, "TransitionTo", "Default");
 		owner.MoveTween.Start();
 	}
 	

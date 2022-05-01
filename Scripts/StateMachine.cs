@@ -29,8 +29,10 @@ public class StateMachine : Node
 		//this.state.HandleInput(Event);
 	}
 	
-	public void HandleMethod(Godot.Collections.Dictionary<string, object> msg = null){
-		this.state.HandleMethod(msg);
+	public object HandleMethod(Godot.Collections.Dictionary<string, object> msg = null){
+		var toReturn = new object();
+		var results = this.state.HandleMethod(msg);
+		return toReturn;
 	}
 
 

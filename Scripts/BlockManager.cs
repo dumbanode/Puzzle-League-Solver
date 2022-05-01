@@ -262,6 +262,13 @@ public class BlockManager : Node2D
 		if (col+1 >= this.num_cols){
 			return false;
 		}
+		
+		GD.Print(this.gameGrid[row, col].CanMove());
+		// ensure both are in states in which they can swap
+		if (!this.gameGrid[row, col].CanMove()){
+			return false;
+		}
+		
 		return true;
 	}
 	
@@ -408,6 +415,8 @@ public class BlockManager : Node2D
 		for (int i = 0; i < this.num_rows; i++) {
 			for (int j = 0; j < this.num_cols; j++){
 				if (this.gameGrid[i,j].getIsCleared()){
+					// only clear a line once everyone is in the "Cleared" state
+					
 					//this.gameGrid[i,j].clear();
 				}
 			}

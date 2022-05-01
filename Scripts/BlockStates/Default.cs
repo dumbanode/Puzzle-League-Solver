@@ -42,5 +42,9 @@ public class Default : State
 		this.stateMachine.TransitionTo("Swapping", whereToMove);
 	}
 	
+	public bool CanMove(){
+		return true;
+	}
+	
 
 }
