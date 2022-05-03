@@ -263,9 +263,17 @@ public class BlockManager : Node2D
 			return false;
 		}
 		
-		GD.Print(this.gameGrid[row, col].CanMove());
-		// ensure both are in states in which they can swap
-		if (!this.gameGrid[row, col].CanMove()){
+		GD.Print("-------");
+		GD.Print(this.gameGrid[row, col]);
+		
+		if (this.gameGrid[row,col] != null){		
+			GD.Print("xxxxxxxxxx");
+			// ensure both are in states in which they can swap
+			if (!this.gameGrid[row, col].CanMove()){
+				return false;
+			}
+		}
+		else {
 			return false;
 		}
 		

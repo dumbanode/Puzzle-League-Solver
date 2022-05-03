@@ -99,12 +99,18 @@ public class GridBlock : Node2D
 	public bool CanMove(){
 		var methodAction = new Godot.Collections.Dictionary<string,object>();
 		methodAction.Add("CanMove", "");
-		GD.Print("Grid Block");
-		var toReturn = this.stateMachine.HandleMethod(methodAction);
-		
-		GD.Print(toReturn);
-		
-		return (bool) toReturn;
+		GD.Print("-- State Machine --");
+		GD.Print(this.stateMachine);
+		bool canMove = (bool) this.handleMethod(methodAction);
+		return canMove;
+	}
+	
+	public object handleMethod(Godot.Collections.Dictionary<string, object> msg = null){
+		object toReturn = false;
+		if (this.stateMachine != null){
+			toReturn = this.stateMachine.HandleMethod(msg);
+		}		
+		return toReturn;
 	}
 	
 	/*
