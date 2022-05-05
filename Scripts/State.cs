@@ -18,11 +18,11 @@ public class State : Node
 		
 	}
 	
-	public virtual object HandleMethod(Godot.Collections.Dictionary<string, object> msg = null){
+	public virtual IList<object> HandleMethod(Godot.Collections.Dictionary<string, object[]> msg = null){
 		List<object> toReturn = new List<object>();
-		foreach(System.Collections.Generic.KeyValuePair<string,object> i in msg){
+		foreach(System.Collections.Generic.KeyValuePair<string,object[]> i in msg){
 			Type thisType = this.GetType();
-			object[] toPass = new object[] {i.Value};
+			var toPass = i.Value;
 			if (GetType().GetMethod(i.Key) != null){
 				object results = new object();
 				var method = GetType().GetMethod(i.Key);

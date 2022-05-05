@@ -15,7 +15,6 @@ public class StateMachine : Node
 
 	public override void _Ready()
 	{
-		GD.Print("Ready");
 		this.state = GetNode<State>(this.initialState);
 		
 		foreach (State child in GetChildren()){
@@ -29,11 +28,13 @@ public class StateMachine : Node
 		//this.state.HandleInput(Event);
 	}
 	
-	public object HandleMethod(Godot.Collections.Dictionary<string, object> msg = null){
-		var toReturn = true;
-		//var results = this.state.HandleMethod(msg);
-		//GD.Print(toReturn);
-		return (object) toReturn;
+	public IList<object> HandleMethod(Godot.Collections.Dictionary<string, object[]> msg = null){
+		//var toReturn = true;
+		GD.Print(msg);
+		var results = this.state.HandleMethod(msg);
+		GD.Print("--------------------");
+		GD.Print(results);
+		return results;
 	}
 
 

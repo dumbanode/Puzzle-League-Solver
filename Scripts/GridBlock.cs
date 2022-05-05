@@ -86,8 +86,9 @@ public class GridBlock : Node2D
 	public void Move(Vector2 target){
 		// Transition to swapping state
 		// pass in where to swap to
-		var methodAction = new Godot.Collections.Dictionary<string,object>();
-		methodAction.Add("Move", target);
+		var methodAction = new Godot.Collections.Dictionary<string,object[]>();
+		object[] toPass = {target};
+		methodAction.Add("Move", toPass);
 		this.stateMachine.HandleMethod(methodAction);
 		
 	}
@@ -97,18 +98,24 @@ public class GridBlock : Node2D
 	}
 	
 	public bool CanMove(){
-		var methodAction = new Godot.Collections.Dictionary<string,object>();
-		methodAction.Add("CanMove", "");
-		GD.Print("-- State Machine --");
-		GD.Print(this.stateMachine);
-		bool canMove = (bool) this.handleMethod(methodAction);
-		return canMove;
+		var methodAction = new Godot.Collections.Dictionary<string,object[]>();
+		object[] toPass = {};
+		methodAction.Add("CanMove", toPass);
+		object canMove = this.handleMethod(methodAction);
+		GD.Print("----------Received----------------");
+		GD.Print(canMove);
+		return true;
 	}
 	
-	public object handleMethod(Godot.Collections.Dictionary<string, object> msg = null){
+	public object handleMethod(Godot.Collections.Dictionary<string, object[]> msg = null){
 		object toReturn = false;
 		if (this.stateMachine != null){
 			toReturn = this.stateMachine.HandleMethod(msg);
+			toReturn = (System.Collections.IEnumerable) toReturn.ToList();
+			GD.Print("xxxxxx RETURNED xxxxxxxxxx");
+			foreach (var i in toReturn){
+				GD.Print(i);
+			}
 		}		
 		return toReturn;
 	}
@@ -126,7 +133,6 @@ public class GridBlock : Node2D
 	
 	public void SetSize(float size){
 		float toScale = (float)(size / 400);
-		GD.Print(toScale);
 		var sprite = (Sprite)GetNode("BlockSprite");
 		sprite.Scale = new Vector2(toScale, toScale);
 	}
