@@ -18,12 +18,13 @@ public class State : Node
 		
 	}
 	
-	public virtual IList<object> HandleMethod(Godot.Collections.Dictionary<string, object[]> msg = null){
-		List<object> toReturn = new List<object>();
+	public virtual Godot.Collections.Array<object> HandleMethod(Godot.Collections.Dictionary<string, object[]> msg = null){
+		Godot.Collections.Array<object> toReturn = new Godot.Collections.Array<object>();
 		foreach(System.Collections.Generic.KeyValuePair<string,object[]> i in msg){
 			Type thisType = this.GetType();
 			var toPass = i.Value;
 			if (GetType().GetMethod(i.Key) != null){
+		
 				object results = new object();
 				var method = GetType().GetMethod(i.Key);
 				if (method.ReturnType != typeof(void)){
@@ -34,6 +35,7 @@ public class State : Node
 					results = false;
 				}
 				toReturn.Add(results);
+			
 			}
 		}
 		return toReturn;

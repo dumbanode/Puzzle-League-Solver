@@ -102,19 +102,18 @@ public class GridBlock : Node2D
 		object[] toPass = {};
 		methodAction.Add("CanMove", toPass);
 		object canMove = this.handleMethod(methodAction);
-		GD.Print("----------Received----------------");
-		GD.Print(canMove);
+
 		return true;
 	}
 	
 	public object handleMethod(Godot.Collections.Dictionary<string, object[]> msg = null){
-		object toReturn = false;
+		Godot.Collections.Array<object> toReturn = new Godot.Collections.Array<object>();;
 		if (this.stateMachine != null){
 			toReturn = this.stateMachine.HandleMethod(msg);
-			toReturn = (System.Collections.IEnumerable) toReturn.ToList();
 			GD.Print("xxxxxx RETURNED xxxxxxxxxx");
+			
 			foreach (var i in toReturn){
-				GD.Print(i);
+				GD.Print((bool)i);
 			}
 		}		
 		return toReturn;

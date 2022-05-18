@@ -28,12 +28,8 @@ public class StateMachine : Node
 		//this.state.HandleInput(Event);
 	}
 	
-	public IList<object> HandleMethod(Godot.Collections.Dictionary<string, object[]> msg = null){
-		//var toReturn = true;
-		GD.Print(msg);
+	public Godot.Collections.Array<object> HandleMethod(Godot.Collections.Dictionary<string, object[]> msg = null){
 		var results = this.state.HandleMethod(msg);
-		GD.Print("--------------------");
-		GD.Print(results);
 		return results;
 	}
 
