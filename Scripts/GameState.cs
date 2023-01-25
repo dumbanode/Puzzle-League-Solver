@@ -8,7 +8,6 @@ using System;
 
 public class GameState : Node
 {
-	
 	//private BlockManager block_manager;
 
 	public override void _Process(float delta)

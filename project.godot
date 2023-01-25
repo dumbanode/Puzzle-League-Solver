@@ -29,6 +29,10 @@ ui_touch={
  ]
 }
 
+[mono]
+
+project/assembly_name="Puzzle League Solver"
+
 [physics]
 
 common/enable_pause_aware_picking=true
